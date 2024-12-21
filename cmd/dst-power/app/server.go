@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"errors"
+	"github.com/MainPoser/dst-power/internal/access"
+	"github.com/MainPoser/dst-power/pkg/config"
 	"net"
 	"net/http"
 	"strconv"
@@ -50,6 +52,9 @@ func (o *Options) AddFlags(fs *pflag.FlagSet) {
 
 	fs.StringVarP(&o.configFile, "conf", "c", "~/.config", "config file path")
 	fs.StringVarP(&o.ginMode, "gin-mode", "", gin.DebugMode, "ginMode")
+	fs.StringVarP(&config.WorkDir, "work-dir", "w", "/tmp", "work dir")
+	fs.StringVarP(&config.StaticDir, "static-dir", "s", "F:\\goproject\\dst-power\\static", "static dir")
+	fs.StringVarP(&config.UiDir, "ui-dir", "u", "F:\\goproject\\dst-power\\ui", "ui dir")
 
 }
 
@@ -64,6 +69,13 @@ func (o *Options) Complete() error {
 func (o *Options) Run(stopCh <-chan struct{}) error {
 	logrus.SetLevel(logrus.Level(o.logLevel))
 	logrus.Infof("%+v\n", *o)
+
+	if err := o.db.InitDatabase(); err != nil {
+		logrus.Fatalln(err)
+	}
+	if err := access.Registry(options_db.GetDB()); err != nil {
+		logrus.Fatalln(err)
+	}
 
 	s := &http.Server{
 		Addr:           o.serverOpt.BindAddress.String() + ":" + strconv.Itoa(o.serverOpt.BindPort),

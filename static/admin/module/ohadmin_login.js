@@ -23,7 +23,7 @@ layui.use(['layer', 'form', 'index'], function () {
             },
             success: function (res) {
                 layer.close(loadIndex);
-                if (res.code == 0) {
+                if (res.code === 200) {
                     // 清除Tab记忆
                     index.clearTabCache();
 
@@ -69,15 +69,15 @@ layui.use(['layer', 'form', 'index'], function () {
 
     // 获取图片验证码
     $('img.login-captcha').click(function () {
-        var url = "/captcha?t=" + (new Date).getTime();
+        let url = "/captcha?t=" + (new Date).getTime();
         $.ajax({
             type: "get",
             url: url,
             success: function (res) {
-                if (res.code == 0) {
+                if (res.code === 0) {
                     this.src = res.data;
                     $("#imgcode").attr("src", res.data);
-                    $("#idkey").val(res.idkey);
+                    $("#idkey").val(res.idKey);
                 }
             }
         });

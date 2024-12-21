@@ -1,9 +1,3 @@
-/**
- * 后台登录验证中间件
- * @author mwq
- * @since 2021/8/20
- * @File : checkauth
- */
 package middleware
 
 import (
@@ -26,7 +20,6 @@ func AdminAuth() gin.HandlerFunc {
 		if !slices.ContainsFunc(loginExceptUrl, func(s string) bool {
 			return s == c.Request.URL.Path
 		}) && !strings.Contains(c.Request.URL.Path, "/static/") {
-			// 获取用户ID
 			session := sessions.Default(c)
 			userId := session.Get(apis.SessionKeyAdminUserId)
 			if userId == nil {
@@ -35,9 +28,10 @@ func AdminAuth() gin.HandlerFunc {
 				return
 			}
 		}
+		// 获取用户ID
 		session := sessions.Default(c)
 		// 获取用户ID
-		userId := session.Get(apis.SessionKeyAdminUserId).(string)
+		userId := session.Get(apis.SessionKeyAdminUserId).(uint)
 		c.Set(apis.SessionKeyAdminLoginUid, userId)
 		// 前置中间件
 		c.Next()

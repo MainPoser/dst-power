@@ -16,8 +16,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/MainPoser/dst-power/internal/middleware"
-	upload2 "github.com/MainPoser/dst-power/internal/router/upload"
+	"github.com/MainPoser/dst-power/internal/router/index"
+	"github.com/MainPoser/dst-power/internal/router/upload"
 	widget "github.com/MainPoser/dst-power/internal/widegt"
+	"github.com/MainPoser/dst-power/pkg/config"
 )
 
 func NewRouter(ginMode string) *gin.Engine {
@@ -41,9 +43,10 @@ func NewRouter(ginMode string) *gin.Engine {
 	//r.Use(middleware.Translations())
 
 	//加载模板
-	r.HTMLRender = loadTemplates("ui")
+	r.HTMLRender = loadTemplates(config.UiDir)
 	// 设置静态资源路由
-	r.Static("/static", "./static")
+	r.Static("/static", config.StaticDir)
+	r.Static("/media", config.MediaDir())
 	r.NoRoute(HandleNotFound)
 	r.NoMethod(HandleNotFound)
 
@@ -53,7 +56,9 @@ func NewRouter(ginMode string) *gin.Engine {
 		return
 	})
 	/* 文件上传 */
-	upload2.RegistryRouter(r)
+	upload.RegistryRouter(r)
+	// 首页相关
+	index.RegistryRouter(r)
 	return r
 }
 
