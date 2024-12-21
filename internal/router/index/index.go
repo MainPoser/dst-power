@@ -39,8 +39,11 @@ func index(ctx *gin.Context) {
 	// 初始化session对象
 	session := sessions.Default(ctx)
 	// 获取用户ID
+	userId := uint(0)
 	userIdInterface := session.Get(apis.SessionKeyAdminUserId)
-	userId := userIdInterface.(uint)
+	if userIdInterface != nil {
+		userId = userIdInterface.(uint)
+	}
 
 	// 获取用户授权菜单
 	menuList := access.GetAdminMenuInterface().GetAdminMenuListByUid(ctx.Request.Context(), userId)

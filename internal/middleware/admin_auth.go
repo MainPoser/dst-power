@@ -31,7 +31,10 @@ func AdminAuth() gin.HandlerFunc {
 		// 获取用户ID
 		session := sessions.Default(c)
 		// 获取用户ID
-		userId := session.Get(apis.SessionKeyAdminUserId).(uint)
+		userId := uint(0)
+		if session.Get(apis.SessionKeyAdminUserId) != nil {
+			userId = session.Get(apis.SessionKeyAdminUserId).(uint)
+		}
 		c.Set(apis.SessionKeyAdminLoginUid, userId)
 		// 前置中间件
 		c.Next()
